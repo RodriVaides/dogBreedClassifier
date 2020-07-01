@@ -4,11 +4,13 @@ import os
 import pickle
 import sys
 import sagemaker_containers
-import pandas as pd
+#import pandas as pd
 import torch
 import torch.optim as optim
 import torch.utils.data
 from torchvision import datasets
+import torchvision.transforms as transforms
+import numpy as np
 
 from model import convClassifier
 
@@ -78,7 +80,7 @@ def _get_train_data_loader(batch_size, data_dir):
 
     # ------------------
 
-def train(n_epochs, loaders, model, optimizer, criterion, use_cuda, save_path):
+def train(n_epochs, loaders, model, optimizer, criterion, device):
     """returns trained model"""
     # initialize tracker for minimum validation loss
     valid_loss_min = np.Inf
@@ -93,11 +95,13 @@ def train(n_epochs, loaders, model, optimizer, criterion, use_cuda, save_path):
         # train the model #
         ###################
         model.train()
-        for batch_idx, (data, target) in enumerate(loaders['train']):
+        for batch_idx, (data, target) in enumerate(loaders):
             try:
                 # move to GPU
-                if use_cuda:
-                    data, target = data.cuda(), target.cuda()
+                data = data.to(device)
+                target = target.to(device)
+#                if use_cuda:
+#                    data, target = data.cuda(), target.cuda()
                 ## find the loss and update the model parameters accordingly
                 #data.resize_(data.size()[0], 3*224*224)
                 optimizer.zero_grad()
@@ -182,7 +186,7 @@ if __name__ == '__main__':
     # Training Parameters
     parser.add_argument('--batch-size', type=int, default=64, metavar='N',
                         help='input batch size for training (default: 512)')
-    parser.add_argument('--epochs', type=int, default=10, metavar='N',
+    parser.add_argument('--epochs', type=int, default=5, metavar='N',
                         help='number of epochs to train (default: 10)')
     # parser.add_argument('--seed', type=int, default=1, metavar='S',
     #                     help='random seed (default: 1)')
@@ -228,7 +232,8 @@ if __name__ == '__main__':
     optimizer = optim.SGD(model.parameters(), lr=0.01)
     loss_fn = torch.nn.CrossEntropyLoss()
 
-    train(model, train_loader, args.epochs, optimizer, loss_fn, device)
+#    train(model, train_loader, args.epochs, optimizer, loss_fn, device)
+    train(args.epochs, train_loader, model, optimizer, loss_fn, device)
 
     # Save the parameters used to construct the model
     # model_info_path = os.path.join(args.model_dir, 'model_info.pth')
