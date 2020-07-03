@@ -19,4 +19,8 @@ class convClassifier(nn.Module):
         x = F.relu(self.mp(self.conv2(x)))
         x = x.view(in_size,-1)
         x = self.fc(x)
-        return F.log_softmax(x)
+        return F.log_softmax(x, dim=1)
+
+    def get_device(self):
+        device = self.conv1.weight.device
+        return device

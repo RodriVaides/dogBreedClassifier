@@ -19,12 +19,12 @@ def model_fn(model_dir):
     print("Loading model.")
 
     # First, load the parameters used to create the model.
-    model_info = {}
-    model_info_path = os.path.join(model_dir, 'model_info.pth')
-    with open(model_info_path, 'rb') as f:
-        model_info = torch.load(f)
+    #model_info = {}
+    #model_info_path = os.path.join(model_dir, 'model_info.pth')
+    #with open(model_info_path, 'rb') as f:
+    #    model_info = torch.load(f)
 
-    print("model_info: {}".format(model_info))
+    #print("model_info: {}".format(model_info))
 
     # Determine the device and construct the model.
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -80,7 +80,7 @@ def _get_train_data_loader(batch_size, data_dir):
 
     # ------------------
 
-def train(n_epochs, loaders, model, optimizer, criterion, device):
+def train(n_epochs, loaders, model, optimizer, criterion, device, model_dir):
     """returns trained model"""
     # initialize tracker for minimum validation loss
     valid_loss_min = np.Inf
@@ -88,6 +88,7 @@ def train(n_epochs, loaders, model, optimizer, criterion, device):
     steps = 0
 
     for epoch in range(1, n_epochs+1):
+        print('device: {}'.format(device))
         # initialize variables to monitor training and validation loss
         train_loss = 0.0
         valid_loss = 0.0
@@ -95,6 +96,8 @@ def train(n_epochs, loaders, model, optimizer, criterion, device):
         # train the model #
         ###################
         model.train()
+        print(model.get_device())
+        print('device: {}'.format(device))
         for batch_idx, (data, target) in enumerate(loaders):
             try:
                 # move to GPU
@@ -138,8 +141,9 @@ def train(n_epochs, loaders, model, optimizer, criterion, device):
             valid_loss
             ))
         ## TODO: save the model if validation loss has decreased
+    save_model(model, model_dir)
     # return trained model
-    return model
+#    return model
 
 
 # def train(model, train_loader, epochs, optimizer, loss_fn, device):
@@ -176,6 +180,10 @@ def train(n_epochs, loaders, model, optimizer, criterion, device):
 #             total_loss += loss.data.item()
 #         print("Epoch: {}, BCELoss: {}".format(epoch, total_loss / len(train_loader)))
 
+def save_model(model, model_dir):
+    print("Saving the model.")
+    path = os.path.join(model_dir, 'model.pth')
+    torch.save(model.cpu().state_dict(), path)
 
 if __name__ == '__main__':
     # All of the model parameters and training parameters are sent as arguments when the script
@@ -187,7 +195,7 @@ if __name__ == '__main__':
     parser.add_argument('--batch-size', type=int, default=64, metavar='N',
                         help='input batch size for training (default: 512)')
     parser.add_argument('--epochs', type=int, default=5, metavar='N',
-                        help='number of epochs to train (default: 10)')
+                        help='number of epochs to train (default: 5)')
     # parser.add_argument('--seed', type=int, default=1, metavar='S',
     #                     help='random seed (default: 1)')
 
@@ -233,7 +241,7 @@ if __name__ == '__main__':
     loss_fn = torch.nn.CrossEntropyLoss()
 
 #    train(model, train_loader, args.epochs, optimizer, loss_fn, device)
-    train(args.epochs, train_loader, model, optimizer, loss_fn, device)
+    train(args.epochs, train_loader, model, optimizer, loss_fn, device, args.model_dir)
 
     # Save the parameters used to construct the model
     # model_info_path = os.path.join(args.model_dir, 'model_info.pth')
@@ -251,6 +259,6 @@ if __name__ == '__main__':
     #     pickle.dump(model.word_dict, f)
 
 	# Save the model parameters
-    # model_path = os.path.join(args.model_dir, 'model.pth')
-    # with open(model_path, 'wb') as f:
-    #     torch.save(model.cpu().state_dict(), f)
+#    model_path = os.path.join(args.model_dir, 'model.pth')
+#    with open(model_path, 'wb') as f:
+#        torch.save(model.cpu().state_dict(), f)
