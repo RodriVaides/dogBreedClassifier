@@ -11,6 +11,7 @@ import torch.utils.data
 from torchvision import datasets
 import torchvision.transforms as transforms
 import numpy as np
+import torchvision.models as models
 
 from model import convClassifier
 
@@ -225,11 +226,18 @@ if __name__ == '__main__':
     train_loader = _get_train_data_loader(args.batch_size, args.data_dir)
 
     # Build the model.
-    model = convClassifier().to(device)
-    # model = convClassifier(args.embedding_dim, args.hidden_dim, args.vocab_size).to(device)
+    model = models.vgg16(pretrained=True)
 
+    for parameter in model.parameters():
+        parameter.requires_grad = False
+
+    classifier = convClassifier()
+    # model = convClassifier(args.embedding_dim, args.hidden_dim, args.vocab_size).to(device)
+    model.classifier = classifier
+    model = model.to(device)
     # with open(os.path.join(args.data_dir, "word_dict.pkl"), "rb") as f:
     #     model.word_dict = pickle.load(f)
+
 
     print("Model loaded")
     # print("Model loaded with embedding_dim {}, hidden_dim {}, vocab_size {}.".format(
