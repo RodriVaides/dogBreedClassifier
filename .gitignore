@@ -2,3 +2,5 @@ data
 .env
 .ipynb_checkpoints
 image-classification-fulltraining.ipynb
+train/Untitled.ipynb
+train/__pycache__/

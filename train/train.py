@@ -29,12 +29,18 @@ def model_fn(model_dir):
 
     # Determine the device and construct the model.
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = convClassifier()
+
+    model = models.vgg16(pretrained=True)
+
+    classifier =  convClassifier()
+
 
     # Load the stored model parameters.
     model_path = os.path.join(model_dir, 'model.pth')
     with open(model_path, 'rb') as f:
-        model.load_state_dict(torch.load(f))
+        classifier.load_state_dict(torch.load(f))
+
+    model.classifier = classifier
 
     model.to(device).eval()
 
@@ -97,7 +103,7 @@ def train(n_epochs, loaders, model, optimizer, criterion, device, model_dir):
         # train the model #
         ###################
         model.train()
-        print(model.get_device())
+        print(model.classifier.get_device())
         print('device: {}'.format(device))
         for batch_idx, (data, target) in enumerate(loaders):
             try:
@@ -142,7 +148,7 @@ def train(n_epochs, loaders, model, optimizer, criterion, device, model_dir):
             valid_loss
             ))
         ## TODO: save the model if validation loss has decreased
-    save_model(model, model_dir)
+    save_model(model.classifier, model_dir)
     # return trained model
 #    return model
 
@@ -245,7 +251,7 @@ if __name__ == '__main__':
     # ))
 
     # Train the model.
-    optimizer = optim.SGD(model.parameters(), lr=0.01)
+    optimizer = optim.SGD(model.classifier.parameters(), lr=0.01)
     loss_fn = torch.nn.CrossEntropyLoss()
 
 #    train(model, train_loader, args.epochs, optimizer, loss_fn, device)
