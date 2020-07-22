@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset='utf-8'>
+		<title>Dog Breed Classifier</title>
+		<style media="screen">
+			#custom-button, #submit-button {
+				padding: 10px;
+				color: white;
+				background-color: rgba(70, 103, 153, 0.75);
+				border: 1px solid #000;
+				border-radius: 5px;
+				cursor: pointer;
+				margin-top:1%;
+/*				margin-left:3%;*/
+				width:15%;
+			}
+			
+			progress {
+/*				margin-left:3%;*/
+				margin-top:5px;
+			}
+			
+			#custom-button:hover, #submit-button:hover{
+				background-color: rgba(70, 103, 153, 1);
+			}
+			
+			#custom-text {
+				margin-left: 10px;
+				font-family: sans-serif;
+				color: #aaa;
+				display:block;
+				margin-top:5px;
+				margin-bottom:5px;
+			}
+			#img_div{
+				margin:auto;
+				text-align:center;
+			}
+			
+			.container{
+				text-align:center;
+				margin-top:4%;
+			}
+			
+		</style>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		
+    <script>
+     "use strict";
+     function submitForm(oFormElement) {
+         var xhr = new XMLHttpRequest();
+         xhr.onload = function() {
+             var result_raw = xhr.responseText;
+			 var result = JSON.parse(result_raw.replace(/'/g,'"'));	
+			 console.log(result)
+             var resultElement = document.getElementById('result');
+			 resultElement.innerHTML = "Your result is: ".concat(result.predicted_name);
+			 var resultImg = document.getElementById('result_img');
+			 resultImg.src = result.predicted_result_url
+			 resultImg.style.visibility="visible"
+             // if (result == 0) {
+    //              resultElement.className = 'bg-danger';
+    //              resultElement.innerHTML = 'Your review was NEGATIVE!';
+    //          } else {
+    //              resultElement.className = 'bg-success';
+    //              resultElement.innerHTML = 'Your review was POSITIVE!';
+    //          }
+         }
+		 xhr.onerror= function() {
+		     alert(" ¯\\_(ツ)_/¯\n The application is currently not running, please contact me to start it (so that I don't get charged by Amazon when it's not being used :D)");
+		 };
+         xhr.open (oFormElement.method, oFormElement.action, true);
+         var review = document.getElementById('review');
+         xhr.send (review.value);
+         return false;
+     }
+    </script>
+	</head>
+	<body>
+		
+<!-- -------------------------------------------------------------		 -->
+<!-- -------------------------------------------------------------		 -->
+<!-- -------------------------------------------------------------		 -->
+		
+        <div class="container">
+            <h1>What is the breed of this dog?</h1>
+			<h3>Upload the picture of a dog to find out its breed</h3>
+			<h4>You can also upload pictures of friends and find out which dog they look like ;D</h4>
+			
+			<input type="file" id="real-file" hidden="hidden" style="visibility:hidden">
+			<button type="button" id="custom-button">CHOOSE A PICTURE</button>
+			<span id="custom-text">No file chosen, yet.</span>
+		    <div>
+		    <button type="button" id="submit-button" onclick="s3upload()">UPLOAD FILE</button>
+		    </div>
+			<progress max=”100” value=”0”></progress>
+
+            <form method="POST"
+                  action="API URL HERE"
+                  onsubmit="return submitForm(this);" >                     <!-- HERE IS WHERE YOU NEED TO ENTER THE API URL -->
+				<button type="submit" class="btn btn-default">GET RESULTS</button>
+                <div style="visibility:hidden" class="form-group">
+                    <label for="review">Review:</label>
+                    <textarea class="form-control"  rows="1" id="review">Enter the url of the file here</textarea>
+                </div>
+            </form>
+            <h1 class="bg-success" id="result"></h1>
+        </div>
+		
+		<div id="img_div">
+		<img id="result_img" src="" alt="result dog" style="visibility:hidden">
+		</div>
+		<script src="https://sdk.amazonaws.com/js/aws-sdk-2.1.24.min.js"></script>
+		<script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<script src="js/file_upload.js"></script>
+		<script type="text/javascript">
+			const realFileBtn = document.getElementById("real-file");
+			const customBtn = document.getElementById("custom-button");
+			const customTxt = document.getElementById("custom-text");
+			
+			customBtn.addEventListener("click", function() {
+				realFileBtn.click();
+			});
+			
+			realFileBtn.addEventListener("change", function(){
+				// alert(realFileBtn.files[0].name)
+				if (realFileBtn.value){
+					customTxt.innerHTML = realFileBtn.files[0].name;
+				} else {
+					customTxt.innerHtml = "No file chosen, yet.";
+				}
+			})
+		</script>
+	</body>
+</html>

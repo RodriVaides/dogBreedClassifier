@@ -4,3 +4,7 @@ data
 image-classification-fulltraining.ipynb
 train/Untitled.ipynb
 train/__pycache__/
+serve/predict_original.py
+serve/requirements_original.txt
+dog_app_backup1.ipynb
+dog_app_backup2.ipynb
