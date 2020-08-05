@@ -30,7 +30,7 @@ def model_fn(model_dir):
     # Determine the device and construct the model.
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    model =  convClassifier()
+    model = convClassifier()
 
 
     # Load the stored model parameters.
@@ -47,8 +47,7 @@ def _get_train_data_loader(batch_size, data_dir):
     print("Get train data loader.")
 
     train_dir = os.path.join(data_dir,'train')
-    # valid_dir = os.path.join(data_dir,'valid')
-    # test_dir = os.path.join(data_dir,'test')
+    valid_dir = os.path.join(data_dir,'valid')
 
     # Defining transforms for the training, validation, and testing sets
     train_transforms = transforms.Compose([transforms.RandomRotation(30),
@@ -58,28 +57,25 @@ def _get_train_data_loader(batch_size, data_dir):
                                            transforms.Normalize([0.485, 0.456, 0.406],
                                                                 [0.229, 0.224, 0.225])])
 
-    # test_validation_transforms = transforms.Compose([transforms.Resize(256),
-    #                                       transforms.CenterCrop(224),
-    #                                       transforms.ToTensor(),
-    #                                       transforms.Normalize([0.485, 0.456, 0.406],
-    #                                                            [0.229, 0.224, 0.225])])
+    validation_transforms = transforms.Compose([transforms.Resize(256),
+                                          transforms.CenterCrop(224),
+                                          transforms.ToTensor(),
+                                          transforms.Normalize([0.485, 0.456, 0.406],
+                                                               [0.229, 0.224, 0.225])])
 
     #Using datasets.ImageFolder to load the data and apply the transforms to each dataset
     train_data = datasets.ImageFolder(train_dir, transform=train_transforms)
-    # valid_data = datasets.ImageFolder(valid_dir, transform=test_validation_transforms)
-    # test_data = datasets.ImageFolder(test_dir, transform=test_validation_transforms)
+    valid_data = datasets.ImageFolder(valid_dir, transform=validation_transforms)
 
     #Creating dataloaders for each dataset
     trainloader = torch.utils.data.DataLoader(train_data, batch_size=64, shuffle=True)
-    # testloader = torch.utils.data.DataLoader(test_data, batch_size=64)
-    # validloader = torch.utils.data.DataLoader(test_data, batch_size=64)
+    validloader = torch.utils.data.DataLoader(valid_data, batch_size=64)
 
-    # loaders_scratch={
-    #     'train':trainloader,
-    #     'test':testloader,
-    #     'valid':validloader
-    # }
-    return trainloader
+    loaders_scratch={
+        'train':trainloader,
+        'valid':validloader
+    }
+    return loaders_scratch
 
     # ------------------
 
@@ -89,9 +85,11 @@ def train(n_epochs, loaders, model, optimizer, criterion, device, model_dir):
     valid_loss_min = np.Inf
     print_every = 100
     steps = 0
+    scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, patience=2, factor=0.5, verbose=True)
+    # loss_list=[]
 
     for epoch in range(1, n_epochs+1):
-        print('device: {}'.format(device))
+        # print('device: {}'.format(device))
         # initialize variables to monitor training and validation loss
         train_loss = 0.0
         valid_loss = 0.0
@@ -99,13 +97,15 @@ def train(n_epochs, loaders, model, optimizer, criterion, device, model_dir):
         # train the model #
         ###################
         model.train()
-        print(model.get_device())
-        print('device: {}'.format(device))
-        for batch_idx, (data, target) in enumerate(loaders):
+        # print(model.get_device())
+        # print('device: {}'.format(device))
+        for batch_idx, (data, target) in enumerate(loaders['train']):
             try:
                 # move to GPU
                 data = data.to(device)
                 target = target.to(device)
+                model.to(device)
+                # print("Device used for training: {}".format(model.get_device()))
 #                if use_cuda:
 #                    data, target = data.cuda(), target.cuda()
                 ## find the loss and update the model parameters accordingly
@@ -114,15 +114,17 @@ def train(n_epochs, loaders, model, optimizer, criterion, device, model_dir):
 
                 output = model.forward(data)
                 loss = criterion(output, target)
+                # loss_list.append(loss)
+
                 loss.backward()
                 optimizer.step()
 
                 ## record the average training loss, using something like
                 #train_loss += loss.item()
                 train_loss = train_loss + ((1 / (batch_idx + 1)) * (loss.data - train_loss))
-                if steps % print_every == 0:
-                    print("Epoch: {}/{}... ".format(epoch, n_epochs),
-                          "Loss: {:.4f}".format(train_loss/print_every))
+                # if steps % print_every == 0:
+                #     print("Epoch: {}/{}... ".format(epoch, n_epochs),
+                #           "Loss: {:.4f}".format(train_loss/print_every))
             except OSError as err:
                 print("there was an error in batch: {}".format(batch_idx))
                 print(err)
@@ -137,14 +139,31 @@ def train(n_epochs, loaders, model, optimizer, criterion, device, model_dir):
         #     ## update the average validation loss
         #
 
+        model.eval()
+        for batch_idx, (data, target) in enumerate(loaders['valid']):
+            # move to GPU
+            data = data.to(device)
+            target = target.to(device)
+            model.to(device)
+
+            ## update the average validation loss
+            output_valid = model.forward(data)
+            v_loss = criterion(output_valid, target)
+            valid_loss = valid_loss + ((1 / (batch_idx + 1)) * (v_loss.data - valid_loss))
+
+        scheduler.step(train_loss)
         # print training/validation statistics
-        print('Epoch: {} \tTraining Loss: {:.6f} \tValidation Loss: {:.6f}'.format(
+        print('Epoch: {} \t Training Loss: {:.6f} \t Validation Loss: {:.6f}'.format(
             epoch,
             train_loss,
             valid_loss
             ))
         ## TODO: save the model if validation loss has decreased
-    save_model(model, model_dir)
+
+        if valid_loss < valid_loss_min:
+            print("Validation loss improved in epoch: {}, Previous valid loss: {}, new valid loss:{}".format(epoch, valid_loss_min, valid_loss))
+            valid_loss_min = valid_loss
+        save_model(model, model_dir)
     # return trained model
 #    return model
 
@@ -190,7 +209,7 @@ if __name__ == '__main__':
     # torch.manual_seed(args.seed)
 
     # Load the training data.
-    train_loader = _get_train_data_loader(args.batch_size, args.data_dir)
+    loaders = _get_train_data_loader(args.batch_size, args.data_dir)
 
     # Build the model.
     model = convClassifier()
@@ -200,11 +219,11 @@ if __name__ == '__main__':
     print("Model loaded")
 
     # Train the model.
-    optimizer = optim.SGD(model.parameters(), lr=0.01)
+    optimizer = optim.SGD(model.parameters(), lr=0.05)
     loss_fn = torch.nn.CrossEntropyLoss()
 
 #    train(model, train_loader, args.epochs, optimizer, loss_fn, device)
-    train(args.epochs, train_loader, model, optimizer, loss_fn, device, args.model_dir)
+    train(args.epochs, loaders , model, optimizer, loss_fn, device, args.model_dir)
 
     # Save the parameters used to construct the model
     # model_info_path = os.path.join(args.model_dir, 'model_info.pth')

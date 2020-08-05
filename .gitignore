@@ -8,3 +8,11 @@ serve/predict_original.py
 serve/requirements_original.txt
 dog_app_backup1.ipynb
 dog_app_backup2.ipynb
+dog_app_backup3.ipynb
+dog_app_backup4.ipynb
+train/train_scratch_backup.py
+train/train_transfer_backup.py
+train/train_transfer_backup_2.py
+train/train_transfer_backup_original.py
+model_dir
+
