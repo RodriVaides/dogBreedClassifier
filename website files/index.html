@@ -34,13 +34,18 @@
 				margin-bottom:5px;
 			}
 			#img_div{
-				margin:auto;
+				margin:auto auto 5% auto;
 				text-align:center;
 			}
 			
 			.container{
 				text-align:center;
 				margin-top:4%;
+			}
+			
+			#result_img, #input_img{
+				margin:0 2% 0 2%;
+				height: 350px;
 			}
 			
 		</style>
@@ -61,20 +66,17 @@
 			 var resultImg = document.getElementById('result_img');
 			 resultImg.src = result.predicted_result_url
 			 resultImg.style.visibility="visible"
-             // if (result == 0) {
-    //              resultElement.className = 'bg-danger';
-    //              resultElement.innerHTML = 'Your review was NEGATIVE!';
-    //          } else {
-    //              resultElement.className = 'bg-success';
-    //              resultElement.innerHTML = 'Your review was POSITIVE!';
-    //          }
+			 var inputImg = document.getElementById('input_img');
+			 inputImg.src = result.input_img_url
+			 inputImg.style.visibility="visible"
+
          }
 		 xhr.onerror= function() {
 		     alert(" ¯\\_(ツ)_/¯\n The application is currently not running, please contact me to start it (so that I don't get charged by Amazon when it's not being used :D)");
 		 };
          xhr.open (oFormElement.method, oFormElement.action, true);
-         var review = document.getElementById('review');
-         xhr.send (review.value);
+         var inputUrl = document.getElementById('inputUrl');
+         xhr.send (inputUrl.value);
          return false;
      }
     </script>
@@ -99,20 +101,22 @@
 			<progress max=”100” value=”0”></progress>
 
             <form method="POST"
-                  action="API URL HERE"
+                  action="https://wa4vigadxa.execute-api.eu-central-1.amazonaws.com/prod"
                   onsubmit="return submitForm(this);" >                     <!-- HERE IS WHERE YOU NEED TO ENTER THE API URL -->
 				<button type="submit" class="btn btn-default">GET RESULTS</button>
                 <div style="visibility:hidden" class="form-group">
-                    <label for="review">Review:</label>
-                    <textarea class="form-control"  rows="1" id="review">Enter the url of the file here</textarea>
+                    <label for="inputUrl">Input Url:</label>
+                    <textarea class="form-control"  rows="1" id="inputUrl">Enter the url of the file here</textarea>
                 </div>
             </form>
             <h1 class="bg-success" id="result"></h1>
         </div>
 		
 		<div id="img_div">
+		<img id="input_img" src="" alt="input file" style="visibility:hidden">
 		<img id="result_img" src="" alt="result dog" style="visibility:hidden">
 		</div>
+		
 		<script src="https://sdk.amazonaws.com/js/aws-sdk-2.1.24.min.js"></script>
 		<script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>

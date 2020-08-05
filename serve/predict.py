@@ -189,45 +189,45 @@ def model_fn(model_dir):
     print("Done loading model.")
     return model
 
-def input_fn(input_dir, content_type):
+def input_fn(input_url, content_type):
 
 
-    img_dir = input_dir.decode("utf-8")
+    img_url = input_url.decode("utf-8")
     input_transforms = transforms.Compose([transforms.Resize(256),
                                       transforms.CenterCrop(224),
                                       transforms.ToTensor(),
                                       transforms.Normalize([0.485, 0.456, 0.406],
                                                            [0.229, 0.224, 0.225])])
     # #
-    response = requests.get(img_dir)
+    response = requests.get(img_url)
     input_img = Image.open(BytesIO(response.content))
     input_data = input_transforms(input_img).unsqueeze(0)
 
     # meta data dict used for debugging and analysing the input data
     input_meta_data = {}
-    input_meta_data['input_dir_type'] = str(type(input_dir))
-    input_meta_data['input_dir'] = str(input_dir)
-    input_meta_data['input_dir_decoded'] = str(img_dir)
-    input_meta_data['input_dir_decoded_type'] = str(type(img_dir))
+    input_meta_data['input_url_type'] = str(type(input_url))
+    input_meta_data['input_url'] = str(input_url)
+    input_meta_data['input_url_decoded'] = str(img_url)
+    input_meta_data['input_url_decoded_type'] = str(type(img_url))
     input_meta_data['transformed_value'] = str(input_data)
     input_meta_data['transformed_value_shape'] = str(input_data.shape)
 
     print(str(input_meta_data))
 
-    return input_data
+    return (img_url,input_data)
 
 def output_fn(prediction_output, accept):
     print('Serializing the generated output.')
     return prediction_output
 
 
-def predict_fn(input_data, model):
+def predict_fn(input_tuple, model):
     print('Inferring sentiment of input data.')
 
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    data = input_data.to(device)
+    data = input_tuple[1].to(device)
 
     # Make sure to put the model into evaluation mode
     model.eval()
@@ -245,5 +245,6 @@ def predict_fn(input_data, model):
     result_dict['predicted_value'] = result
     result_dict['predicted_name'] = dog_category_dict[result]
     result_dict['predicted_result_url'] = "https://my-sage-maker-instance-test-20-03-2020-2.s3.eu-central-1.amazonaws.com/img_inputs/display/{}/file1.jpg".format(url_folder_name)
+    result_dict['input_img_url'] = input_tuple[0]
 
     return str(result_dict)

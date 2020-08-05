@@ -1,7 +1,7 @@
 //Bucket Configurations
-var bucketName = "NAME OF THE BUCKET WHERE YOU WILL UPLOAD THE FILES"; // Fill in with your bucket name
+var bucketName = "my-sage-maker-instance-test-20-03-2020-2";
 var bucketRegion = "eu-central-1";
-var IdentityPoolId = "IDENTITY POOL ID"; // Fill in with the ID of the Identity Pool created
+var IdentityPoolId = "eu-central-1:83237b44-78f2-494e-b25d-519239335ded";
 
  AWS.config.update({
                 region: bucketRegion,
@@ -25,7 +25,7 @@ function s3upload() {
      var fileName = file.name;
      var filePath = 'img_inputs/' + fileName;
      var fileUrl = 'https://' + bucketName + '.s3.' + bucketRegion + '.amazonaws.com/' +  filePath;
-	 var review = document.getElementById('review')
+	 var review = document.getElementById('inputUrl')
 	 review.innerHTML = fileUrl
 	 // alert(fileUrl)
      s3.upload({
