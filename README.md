@@ -1,6 +1,9 @@
 # Dog Breed Classifier
 Dog breed classifier is a project developed as part of Udacity's Machine Learning Engineer Nanodegree, where a machine learning model was built to classify pictures of dogs into their corresponding breeds. The project is built with Pytorch, and it uses Convolutional neural networks to build a model from scratch as well as a pre-trained model to classify images. In this project a static website is also included as an interface for users to classify images.
 
+## Link to github project (if viewing README outside of github)
+https://github.com/RodriVaides/dogBreedClassifier
+
 # Repository contents
 The main file where most of the content and notes for the project are contained is the Jupyter notebook "dog_app.ipynb".
 
@@ -37,5 +40,15 @@ which will take you to a website deployed in amazon.
 
 You can also use the file [index.html](website_files/index.html) to view the website.
 
+# Steps for obtaining the dataset
+
+There are 2 datasets which will be used for this project. Both datasets have been provided by Udacity as part of the Machine Learning nanodegree and can be downloaded from the following links:
+
+* <strong>Dog image files:</strong><br>
+https://s3-us-west-1.amazonaws.com/udacity-aind/dog-project/dogImages.zip
+
+* <strong>Human image files:</strong><br>
+https://s3-us-west-1.amazonaws.com/udacity-aind/dog-project/lfw.zip
+
 # License
-For information about the license please view the [LICENSE](LICENSE) file 
+For information about the license please view the [LICENSE](LICENSE) file
