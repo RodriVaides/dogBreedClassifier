@@ -6,17 +6,10 @@ import torch.nn.functional as F
 
 # define the CNN architecture
 class convClassifier(nn.Module):
-    ### TODO: choose an architecture, and complete the class
+
     def __init__(self):
         super(convClassifier, self).__init__()
         # Define layers of a CNN
-        # TODO: Specify model architecture
-        # self.classifier = nn.Sequential(OrderedDict([('fc1',nn.Linear(25088,5000)),
-        #                                         ('relu',nn.ReLU()),
-        #                                         ('drop',nn.Dropout(p=0.5)),
-        #                                         ('fc2',nn.Linear(5000,133)),
-        #                                         ('output',nn.LogSoftmax(dim=1))
-        #                                         ]))
         self.fc1 = nn.Linear(25088,5000)
         self.relu = nn.ReLU()
         self.drop = nn.Dropout(p=0.5)

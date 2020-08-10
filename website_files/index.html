@@ -52,34 +52,7 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-		
-    <script>
-     "use strict";
-     function submitForm(oFormElement) {
-         var xhr = new XMLHttpRequest();
-         xhr.onload = function() {
-             var result_raw = xhr.responseText;
-			 var result = JSON.parse(result_raw.replace(/'/g,'"'));	
-			 console.log(result)
-             var resultElement = document.getElementById('result');
-			 resultElement.innerHTML = "Your result is: ".concat(result.predicted_name);
-			 var resultImg = document.getElementById('result_img');
-			 resultImg.src = result.predicted_result_url
-			 resultImg.style.visibility="visible"
-			 var inputImg = document.getElementById('input_img');
-			 inputImg.src = result.input_img_url
-			 inputImg.style.visibility="visible"
-
-         }
-		 xhr.onerror= function() {
-		     alert(" ¯\\_(ツ)_/¯\n The application is currently not running, please contact me to start it (so that I don't get charged by Amazon when it's not being used :D)");
-		 };
-         xhr.open (oFormElement.method, oFormElement.action, true);
-         var inputUrl = document.getElementById('inputUrl');
-         xhr.send (inputUrl.value);
-         return false;
-     }
-    </script>
+		<script src="js/submit_file.js"></script>
 	</head>
 	<body>
 		
@@ -121,23 +94,6 @@
 		<script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 		<script src="js/file_upload.js"></script>
-		<script type="text/javascript">
-			const realFileBtn = document.getElementById("real-file");
-			const customBtn = document.getElementById("custom-button");
-			const customTxt = document.getElementById("custom-text");
-			
-			customBtn.addEventListener("click", function() {
-				realFileBtn.click();
-			});
-			
-			realFileBtn.addEventListener("change", function(){
-				// alert(realFileBtn.files[0].name)
-				if (realFileBtn.value){
-					customTxt.innerHTML = realFileBtn.files[0].name;
-				} else {
-					customTxt.innerHtml = "No file chosen, yet.";
-				}
-			})
-		</script>
+		<script src="js/custom_file_upload_button.js"></script>
 	</body>
 </html>

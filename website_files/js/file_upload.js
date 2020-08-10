@@ -25,8 +25,8 @@ function s3upload() {
      var fileName = file.name;
      var filePath = 'img_inputs/' + fileName;
      var fileUrl = 'https://' + bucketName + '.s3.' + bucketRegion + '.amazonaws.com/' +  filePath;
-	 var review = document.getElementById('inputUrl')
-	 review.innerHTML = fileUrl
+	 var inputUrl = document.getElementById('inputUrl')
+	 inputUrl.innerHTML = fileUrl
 	 // alert(fileUrl)
      s3.upload({
         Key: filePath,

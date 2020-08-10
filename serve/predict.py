@@ -10,19 +10,14 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.utils.data
-#
-# from torchvision import datasets
 import torchvision.transforms as transforms
 import torchvision.models as models
-#
 from PIL import Image
-#
 from model import convClassifier
 import requests
 from io import BytesIO
 
-# from torchvision import datasets
-
+#The dog category used to return the name of the dog breed
 dog_category_dict = {121: 'Pointer',
  68: 'French_bulldog',
  123: 'Poodle',
@@ -161,21 +156,12 @@ def model_fn(model_dir):
     """Load the PyTorch model from the `model_dir` directory."""
     print("Loading model.")
 
-    # First, load the parameters used to create the model.
-    #model_info = {}
-    #model_info_path = os.path.join(model_dir, 'model_info.pth')
-    #with open(model_info_path, 'rb') as f:
-    #    model_info = torch.load(f)
-
-    #print("model_info: {}".format(model_info))
-
     # Determine the device and construct the model.
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     model = models.vgg16(pretrained=True)
 
     classifier =  convClassifier()
-
 
     # Load the stored model parameters.
     model_path = os.path.join(model_dir, 'model.pth')
@@ -232,19 +218,26 @@ def predict_fn(input_tuple, model):
     # Make sure to put the model into evaluation mode
     model.eval()
 
-    # TODO: Compute the result of applying the model to the input data. The variable `result` should
-    #       be a numpy array which contains a single integer which is either 1 or 0
-
+    # Compute the result of applying the model to the input data.
     with torch.no_grad(): output = model.forward(data)
     result = int(output.argmax())
-    # result = np.int(np.round(output.numpy()))
+
     result_dict = {}
     url_folder_name = str(result+1).zfill(3)+"."+dog_category_dict[result]
 
     # Creating response dictionary (Json)
+    # 'predicted_value' contains the integer corresponding to the dog breed classified
     result_dict['predicted_value'] = result
+
+    # predicted name contains the name of the dog breed classified
     result_dict['predicted_name'] = dog_category_dict[result]
+
+    # Here I send back an image from the breed that was classified as a result.
+    # The images were randomly sampled from the full data set and previously uploaded to Amzon S3
     result_dict['predicted_result_url'] = "https://my-sage-maker-instance-test-20-03-2020-2.s3.eu-central-1.amazonaws.com/img_inputs/display/{}/file1.jpg".format(url_folder_name)
+
+    # I also return the url of the image sent as an input, so that it can be displayed ot the user together with the results
     result_dict['input_img_url'] = input_tuple[0]
 
+    # Return the full dictionary to the web application 
     return str(result_dict)
