@@ -11,9 +11,7 @@ The "train" and "serve" folders contain the files that were used to train and de
 
 The folder "haarcascades" includes the xml file required by the OpenCV face detector which is used at the beginning of the Jupyter notebook.
 
-The folder "website_files" contains the .html & javascript files that were used to build the static website for the users.
-
-The folder "submission files" contains the report submitted to Udacity for review.
+The folder "website files" contains the .html & javascript files that were used to build the static website for the users.
 
 # Dependencies
 
