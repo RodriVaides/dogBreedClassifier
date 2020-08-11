@@ -17,6 +17,14 @@ from model import convClassifier
 import requests
 from io import BytesIO
 
+"""
+--------------References------------------
+NOTE: This file was built using the code from Udacity's Machine Learning Nanodegree as a base
+(Therefore it might have the same structure as other Udacity projects (such as the comment "Load the stored model parameters")
+The udacity template files can be found here:
+https://github.com/udacity/sagemaker-deployment - referenced in July / August 2020
+"""
+
 #The dog category used to return the name of the dog breed
 dog_category_dict = {121: 'Pointer',
  68: 'French_bulldog',
@@ -239,5 +247,5 @@ def predict_fn(input_tuple, model):
     # I also return the url of the image sent as an input, so that it can be displayed ot the user together with the results
     result_dict['input_img_url'] = input_tuple[0]
 
-    # Return the full dictionary to the web application 
+    # Return the full dictionary to the web application
     return str(result_dict)

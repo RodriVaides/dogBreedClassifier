@@ -1,7 +1,7 @@
 # Dog Breed Classifier
 Dog breed classifier is a project developed as part of Udacity's Machine Learning Engineer Nanodegree, where a machine learning model was built to classify pictures of dogs into their corresponding breeds. The project is built with Pytorch, and it uses Convolutional neural networks to build a model from scratch as well as a pre-trained model to classify images. In this project a static website is also included as an interface for users to classify images.
 
-## Link to github project (if viewing README outside of github)
+## Link to github project (if viewing README outside of github, please use this repository)
 https://github.com/RodriVaides/dogBreedClassifier
 
 # Repository contents
@@ -51,6 +51,21 @@ https://s3-us-west-1.amazonaws.com/udacity-aind/dog-project/dogImages.zip
 
 * <strong>Human image files:</strong><br>
 https://s3-us-west-1.amazonaws.com/udacity-aind/dog-project/lfw.zip
+
+# Files and projects used as reference to build this project
+#### Course material from Udacity's Machine Learning Nanodegree
+* https://github.com/udacity/sagemaker-deployment
+* https://pytorch.org/docs/stable/torchvision/
+
+#### Pytorch documentation
+* https://pytorch.org/tutorials/beginner/blitz/cifar10_tutorial.html
+
+#### Reference files for building website
+* https://www.youtube.com/watch?v=T3PDgtliezo
+
+* https://medium.com/@shresthshruti09/uploading-files-in-aws-s3-bucket-through-javascript-sdk-with-progress-bar-d2a4b3ee77b5
+
+* https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/s3-example-photo-album.html
 
 # License
 For information about the license please view the [LICENSE](LICENSE) file
