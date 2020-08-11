@@ -1,3 +1,6 @@
+// Reference for customizing file upload custom_file_upload_button
+// https://www.youtube.com/watch?v=T3PDgtliezo
+
 const realFileBtn = document.getElementById("real-file");
 const customBtn = document.getElementById("custom-button");
 const customTxt = document.getElementById("custom-text");
