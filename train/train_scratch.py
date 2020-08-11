@@ -15,6 +15,13 @@ import torchvision.models as models
 
 from model_scratch import convClassifier
 
+"""
+NOTE: This file was built using the code from Udacity's Machine Learning Nanodegree as a base
+(Therefore it might have the same structure as other Udacity projects (such as the comment "Load the stored model parameters")
+The udacity template files can be found here:
+https://github.com/udacity/sagemaker-deployment - referenced in July / August 2020
+"""
+
 def model_fn(model_dir):
     """Load the PyTorch model from the `model_dir` directory."""
     print("Loading model.")

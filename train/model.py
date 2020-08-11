@@ -3,7 +3,20 @@ import torch.nn as nn
 from collections import OrderedDict
 import torch.nn.functional as F
 
+"""
+NOTE: This file was built using the code from Udacity's Machine Learning Nanodegree as a base
+(Therefore it might have the same structure as other Udacity projects (such as the comment "Load the stored model parameters")
+The udacity template files can be found here:
+https://github.com/udacity/sagemaker-deployment - referenced in July / August 2020
+"""
 
+"""
+The reference used for building the image classifier was the Pytorch documentation available here:
+https://pytorch.org/tutorials/beginner/blitz/cifar10_tutorial.html
+
+and here:
+https://pytorch.org/docs/stable/torchvision/
+"""
 # define the CNN architecture
 class convClassifier(nn.Module):
     ### TODO: choose an architecture, and complete the class
