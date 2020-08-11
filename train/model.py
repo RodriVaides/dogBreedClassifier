@@ -4,6 +4,7 @@ from collections import OrderedDict
 import torch.nn.functional as F
 
 """
+--------------References------------------
 NOTE: This file was built using the code from Udacity's Machine Learning Nanodegree as a base
 (Therefore it might have the same structure as other Udacity projects (such as the comment "Load the stored model parameters")
 The udacity template files can be found here:
